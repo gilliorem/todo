@@ -4,16 +4,6 @@ const taskContainer = document.querySelector('.task-container');
 const taskDoneContainer = document.querySelector('.task-done');
 let taskArray = [];
 
-
-function fillCheckMark()
-{
-    let checkMarkElement = drawCheckMark();
-    checkMarkElement.addEventListener("click",()=>
-    {
-        checkMarkElement.classList.toggle("checked");
-    })
-}
-
 class Task
 {
     constructor(name)
@@ -96,7 +86,7 @@ class Task
         })
     }
 
-    serialize()
+    serialize() // converting object into string
     {
         let serializeTask = 
         {
@@ -105,7 +95,7 @@ class Task
         }
         return serializeTask;
     }
-    deserialize(data)
+    deserialize(data) //converting the string back to an object
     {
         this.name = data.name;
         this.isDone = data.isDone;
@@ -128,12 +118,20 @@ function storeTasks()
 
 function readTask()
 {
-    let tasks = [];
-    for (let task of taskArray)
+    let serializeTasks = localStorage.getItem('tasks');
+    if (serializeTasks)
     {
-        let data = localStorage.getItem("tasks", )
+        let tasks = JSON.parse(serializeTasks);
+        console.log(tasks);
+        for (let task of tasks)
+        {
+            let taskObj = new Task(task.name);
+            taskObj.deserialize(task);
+        }
+        return tasks;
     }
-    deserialize()
+    else
+        return [];
 }
 
 addTaskButton.addEventListener("click",()=>
