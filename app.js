@@ -2,146 +2,245 @@ const input = document.querySelector('input');
 const addTaskButton = document.querySelector('.add-task-button');
 const taskContainer = document.querySelector('.task-container');
 const taskDoneContainer = document.querySelector('.task-done');
-let taskArray = [];
 
 class Task
 {
-    constructor(name)
+    constructor(name, isDone = false)
     {
         this.name = name;
-        this.isDone = false;
-        this.element = document.createElement("div");
-        this.checkSpan = document.createElement("span");
-        this.deleteSpan = document.createElement("span");
-        taskArray.push(this);
-        this.draw();
-        this.listenCheck();
-        this.listenDelete();
+        this.isDone = isDone;
+    }
+}
+
+class TodoList 
+{
+    constructor()
+    {
+        this.tasks = JSON.parse(localStorage.getItem("tasks")) || [];
     }
 
-    draw()
+    updateLocalStorage()
     {
-        taskContainer.append(this.element, this.checkSpan);
-        taskContainer.append(this.element, this.deleteSpan);
-        this.element.classList.add("task-div");
-        this.element.innerText = this.name;
-        this.element.append(this.checkSpan);
-        this.element.append(this.deleteSpan);
-        this.checkSpan.classList.add("check-mark");
-        this.deleteSpan.classList.add("delete-mark");
+        localStorage.setItem("tasks", JSON.stringify(this.tasks));
     }
 
-    check()
+    renderTasks()
     {
-        let taskToCheck = taskArray.indexOf(this);
-        this.isDone = true;
-        this.checkSpan.classList.toggle('checked');
-        taskDoneContainer.append(this.element);
-        console.log(this);
-        this.deserialize(this);
-    }
+        this.tasks.forEach((task, index) => {
+            let taskElement = document.createElement('div');
+            taskContainer.append(taskElement);
+            taskElement.innerText = task.name;
 
-    uncheck()
-    {
-        this.isDone = false;
-        this.checkSpan.classList.toggle('checked');
-        taskContainer.append(this.element);
-        console.log(this);
-    }
-
-    delete()
-    {
-        let indexToDelete = taskArray.indexOf(this);
-        this.element.remove();
-        if (indexToDelete !== -1)
-        {
-            taskArray.splice(indexToDelete, 1);
-            console.log("updated array :", taskArray);
-        }
-        else
-        console.log("error, element could not be deleted");
-    }
-
-    listenCheck()
-    {
-        this.checkSpan.addEventListener("click",()=>
-        {
-            if (!this.isDone)
+            let checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.checked = task.isDone;
+            checkbox.addEventListener('change',()=>
             {
-                this.check();
-            }
-            else if (this.isDone)
+                this.tasks[index].isDone = checkbox.checked;
+                this.updateLocalStorage();
+            });
+
+            let deleteCross = document.createElement('div');
+            deleteCross.classList.add('delete-mark');
+            deleteCross.addEventListener('click',()=>
             {
-                this.uncheck();
-            }
-        })
+                this.tasks.splice(index, 1);
+                taskElement.remove();
+                this.updateLocalStorage();
+            })
+
+            taskContainer.appendChild(taskElement);
+            taskElement.appendChild(checkbox);
+            taskElement.appendChild(deleteCross);
+        });
+    }
+    renderTask(name, isDone)
+    {
+        let taskElement = document.createElement('div');
+        taskContainer.append(taskElement);
+        taskElement.innerText = name;
+
+        let checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = isDone;
+        checkbox.addEventListener('change',()=>
+        {
+            this.tasks.isDone = checkbox.checked;
+            this.updateLocalStorage();
+        });
+
+        let deleteCross = document.createElement('div');
+        deleteCross.classList.add('delete-mark');
+        deleteCross.addEventListener('click',()=>
+        {
+            let indexToDelete = this.tasks.indexOf(this);
+            this.tasks.splice(indexToDelete, 1);
+            taskElement.remove();
+            this.updateLocalStorage();
+        });
+
+        taskElement.appendChild(checkbox);
+        taskContainer.appendChild(taskElement);
+        taskElement.appendChild(deleteCross);
     }
     
-    listenDelete()
+    addTask(name)
     {
-        this.deleteSpan.addEventListener('click',()=>
-        {
-            this.delete();
-            
-        })
-    }
-
-    serialize() // converting object into string
-    {
-        let serializeTask = 
-        {
-            name : this.name,
-            isDone : this.isDone
-        }
-        return serializeTask;
-    }
-    deserialize(data) //converting the string back to an object
-    {
-        this.name = data.name;
-        this.isDone = data.isDone;
-        if (data.isDone)
-        {
-            this.checkSpan.classList.add("checked");
-            this.isDone = true;
-        }
+        this.tasks.push(new Task(name));
+        this.updateLocalStorage();
+        this.renderTask(name)
     }
 }
-function storeTasks()
-{   
-    let tasks = [];
-    for (let task of taskArray)
-    {
-        tasks.push(task.serialize());
-    }
-    window.localStorage.setItem("tasks", JSON.stringify(tasks));
+
+const todoList = new TodoList();
+window.onload = () =>
+{
+    todoList.renderTasks();
 }
 
-function readTask()
+addTaskButton.addEventListener('click',()=>
 {
-    let serializeTasks = localStorage.getItem('tasks');
-    if (serializeTasks)
-    {
-        let tasks = JSON.parse(serializeTasks);
-        console.log(tasks);
-        for (let task of tasks)
-        {
-            let taskObj = new Task(task.name);
-            taskObj.deserialize(task);
-        }
-        return tasks;
-    }
-    else
-        return [];
-}
+    todoList.addTask(input.value);
+});
 
-addTaskButton.addEventListener("click",()=>
-{
-    let task = new Task(input.value);
-    input.value = "";
-    storeTasks();
-})
 
-window.addEventListener('load',()=>
-{
-    readTask();
-})
+// class Task
+// {
+//     constructor(name)
+//     {
+//         this.name = name;
+//         this.isDone = false;
+//         this.element = document.createElement("div");
+//         this.checkSpan = document.createElement("span");
+//         this.deleteSpan = document.createElement("span");
+//         taskArray.push(this);
+//         this.draw();
+//         this.listenCheck();
+//         this.listenDelete();
+//     }
+
+//     draw()
+//     {
+//         taskContainer.append(this.element, this.checkSpan);
+//         taskContainer.append(this.element, this.deleteSpan);
+//         this.element.classList.add("task-div");
+//         this.element.innerText = this.name;
+//         this.element.append(this.checkSpan);
+//         this.element.append(this.deleteSpan);
+//         this.checkSpan.classList.add("check-mark");
+//         this.deleteSpan.classList.add("delete-mark");
+//     }
+
+//     check()
+//     {
+//         let taskToCheck = taskArray.indexOf(this);
+//         this.isDone = true;
+//         this.checkSpan.classList.toggle('checked');
+//         taskDoneContainer.append(this.element);
+//         console.log(this);
+//         this.serialize(this);
+//     }
+
+//     uncheck()
+//     {
+//         this.isDone = false;
+//         this.checkSpan.classList.toggle('checked');
+//         taskContainer.append(this.element);
+//         console.log(this);
+//     }
+
+//     delete()
+//     {
+//         let indexToDelete = taskArray.indexOf(this);
+//         this.element.remove();
+//         if (indexToDelete !== -1)
+//         {
+//             taskArray.splice(indexToDelete, 1);
+//             console.log("updated array :", taskArray);
+//         }
+//         else
+//         console.log("error, element could not be deleted");
+//     }
+
+//     listenCheck()
+//     {
+//         this.checkSpan.addEventListener("click",()=>
+//         {
+//             if (!this.isDone)
+//             {
+//                 this.check();
+//             }
+//             else if (this.isDone)
+//             {
+//                 this.uncheck();
+//             }
+//         })
+//     }
+    
+//     listenDelete()
+//     {
+//         this.deleteSpan.addEventListener('click',()=>
+//         {
+//             this.delete();
+//         })
+//     }
+
+//     serialize() // converting object into string
+//     {
+//         let serializeTask = 
+//         {
+//             name : this.name,
+//             isDone : this.isDone
+//         }
+//         return serializeTask;
+//     }
+//     deserialize(data) //converting the string back to an object
+//     {
+//         this.name = data.name;
+//         this.isDone = data.isDone;
+//         if (data.isDone)
+//         {
+//             this.checkSpan.classList.add("checked");
+//             this.isDone = true;
+//         }
+//     }
+// }
+// function storeTasks()
+// {   
+//     let tasks = [];
+//     for (let task of taskArray)
+//     {
+//         tasks.push(task.serialize());
+//     }
+//     window.localStorage.setItem("tasks", JSON.stringify(tasks));
+// }
+
+// function readTask()
+// {
+//     let serializeTasks = localStorage.getItem('tasks');
+//     if (serializeTasks)
+//     {
+//         let tasks = JSON.parse(serializeTasks);
+//         console.log(tasks);
+//         for (let task of tasks)
+//         {
+//             let taskObj = new Task(task.name);
+//             taskObj.deserialize(task);
+//         }
+//         return tasks;
+//     }
+//     else
+//         return [];
+// }
+
+// addTaskButton.addEventListener("click",()=>
+// {
+//     let task = new Task(input.value);
+//     input.value = "";
+//     storeTasks();
+// })
+
+// window.addEventListener('load',()=>
+// {
+//     readTask();
+// })
