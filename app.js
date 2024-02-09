@@ -1,7 +1,6 @@
 const input = document.querySelector('input');
 const addTaskButton = document.querySelector('.add-task-button');
 const taskContainer = document.querySelector('.task-container');
-const taskDoneContainer = document.querySelector('.task-done');
 
 class Task
 {
@@ -26,12 +25,15 @@ class TodoList
 
     renderTasks()
     {
-        this.tasks.forEach((task, index) => {
+        this.tasks.forEach((task, index) => 
+        {
             let taskElement = document.createElement('div');
+            taskElement.classList.add('task-div')
             taskContainer.append(taskElement);
             taskElement.innerText = task.name;
 
             let checkbox = document.createElement('input');
+            checkbox.classList.add("checkbox");
             checkbox.type = 'checkbox';
             checkbox.checked = task.isDone;
             checkbox.addEventListener('change',()=>
@@ -42,6 +44,7 @@ class TodoList
 
             let deleteCross = document.createElement('div');
             deleteCross.classList.add('delete-mark');
+            deleteCross.innerText='+';
             deleteCross.addEventListener('click',()=>
             {
                 this.tasks.splice(index, 1);
