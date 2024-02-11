@@ -28,7 +28,7 @@ class TodoList
         this.tasks.forEach((task, index) => 
         {
             let taskElement = document.createElement('div');
-            taskElement.classList.add('task-div')
+            taskElement.classList.add('task-div');
             taskContainer.append(taskElement);
             taskElement.innerText = task.name;
 
@@ -36,13 +36,14 @@ class TodoList
             checkbox.classList.add("checkbox");
             checkbox.type = 'checkbox';
             checkbox.checked = task.isDone;
+
             checkbox.addEventListener('change',()=>
             {
                 this.tasks[index].isDone = checkbox.checked;
                 this.updateLocalStorage();
             });
 
-            let deleteCross = document.createElement('div');
+            let deleteCross = document.createElement('button');
             deleteCross.classList.add('delete-mark');
             deleteCross.innerText='+';
             deleteCross.addEventListener('click',()=>
@@ -72,7 +73,7 @@ class TodoList
             this.updateLocalStorage();
         });
 
-        let deleteCross = document.createElement('div');
+        let deleteCross = document.createElement('button');
         deleteCross.classList.add('delete-mark');
         deleteCross.addEventListener('click',()=>
         {

@@ -50,7 +50,7 @@ input:focus-visible
   border-bottom: 2px solid whitesmoke;
 }
 
-.add-task-button
+button
 {
   position: relative;
   border: 1px solid transparent;
@@ -67,14 +67,26 @@ input:focus-visible
   padding: 20px;
 }
 
-.add-task-button:hover, .add-task-button:focus
+button:hover, button:focus
 {
   cursor: pointer;
   background-color: transparent;
-  box-shadow: 0 0 0 10px rgba(18, 56, 181, 0.494);
-  color: rgb(82, 103, 172);
   transition: all .5s;
 }
+
+.add-task-button:hover, .add-task-button:focus
+{
+  box-shadow: 0 0 0 10px rgba(18, 56, 181, 0.494);
+  color: rgb(82, 103, 172);
+}
+
+
+.delete-mark:hover, .delete-mark:focus
+{
+	box-shadow: 0 0 0 10px rgba(255, 17, 0, 0.37);
+	color: 0 0 0 10px rgb(244, 67, 54, .57);
+}
+
 
 .task-container
 {
@@ -85,13 +97,19 @@ input:focus-visible
 {
   display: flex;
   justify-content: flex-start;
+  align-items: center;
   font-size: .7em;
   width: 100%;
 }
 
-.checkbox{
-  position: relative;
+.checkbox
+{
+  padding:1em;
+  cursor: pointer;
+  width:25px;
+  height: 25px;
 }
+
 
 .delete-mark
 {
@@ -101,4 +119,9 @@ input:focus-visible
   color: red;
   rotate: 45deg;
   font-size: 1.5em;
+}
+
+.start-timer-span
+{
+  rotate: -90deg;
 }
