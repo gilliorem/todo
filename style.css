@@ -125,3 +125,8 @@ button:hover, button:focus
 {
   rotate: -90deg;
 }
+
+.crossed
+{
+  text-decoration: line-through;
+}

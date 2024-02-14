@@ -35,7 +35,9 @@ class TodoList
             let taskElement = document.createElement('div');
             taskElement.classList.add('task-div');
             taskContainer.append(taskElement);
-            taskElement.innerText = task.name;
+            let taskTitle = document.createElement('p');
+            taskTitle.innerText = task.name
+            taskElement.append(taskTitle);
 
             let checkbox = document.createElement('input');
             checkbox.classList.add("checkbox");
@@ -45,8 +47,15 @@ class TodoList
             checkbox.addEventListener('change',()=>
             {
                 this.tasks[index].isDone = checkbox.checked;
+                taskTitle.classList.toggle("crossed");
                 this.updateLocalStorage();
             });
+
+            let startTimerButton = document.createElement("button");
+            startTimerButton.classList.add("start-timer-button");
+            let spanTimer = document.createElement("span");
+            spanTimer.classList.add("start-timer-span");
+            spanTimer.innerText = "v";
 
             startTimerButton.addEventListener("click",()=>
             {
@@ -54,6 +63,8 @@ class TodoList
                 this.tasks[index].isTracked = tracker;
                 this.updateLocalStorage();
             })
+
+           
             
             let deleteCross = document.createElement('button');
             deleteCross.classList.add('delete-mark');
@@ -68,6 +79,7 @@ class TodoList
             taskContainer.appendChild(taskElement);
             taskElement.appendChild(checkbox);
             taskElement.append(startTimerButton);
+            startTimerButton.append(spanTimer);
             taskElement.appendChild(deleteCross);
         });
     }
@@ -86,6 +98,18 @@ class TodoList
             this.updateLocalStorage();
         });
 
+        let startTimerButton = document.createElement("button");
+        startTimerButton.classList.add("start-timer-button");
+        let spanTimer = document.createElement("span");
+        spanTimer.classList.add("start-timer-span");
+
+        startTimerButton.addEventListener("click",()=>
+            {
+                let tracker = new Tracker(taskElement);
+                this.tasks[index].isTracked = tracker;
+                this.updateLocalStorage();
+            })
+
         let deleteCross = document.createElement('button');
         deleteCross.classList.add('delete-mark');
         deleteCross.addEventListener('click',()=>
@@ -98,6 +122,8 @@ class TodoList
 
         taskElement.appendChild(checkbox);
         taskContainer.appendChild(taskElement);
+        taskElement.append(startTimerButton);
+        startTimerButton.append(spanTimer);
         taskElement.appendChild(deleteCross);
     }
     
