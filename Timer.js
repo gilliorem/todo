@@ -1,79 +1,58 @@
+export {Tracker}
+export {startTimerButton}
 let startTimerButton = document.querySelector('.start-timer-button');
-taskContainer.append(testDiv);
-
-let timer = 0;
-let seconds = 0;
-let minutes = 0;
-let hours = 0;
-
+const timerElement = document.createElement("div");
 class Tracker
 {
-    constructor(isStarted = false)
+    constructor(element)
     {
-        this.isStarted = isStarted;
-        this.draw();
-        setInterval(this.startTimer, 1000);
+        this.startTime = null;
+        this.timerInterval = null;
+        this.startTimer();
+        this.draw(element)
     }
     startTimer()
     {
-        timer++;
-        if(seconds <= 60)
-        {
-            seconds++;
-        }
-        if (seconds == 60)
-        {
-            minutes++;
-            seconds = 0;
-        }
-        if (minutes == 60)
-        {
-            hours ++;
-            minutes = 0;
-        }
-        console.log('timer: ' + timer);
-        console.log("sec: " + seconds);
-        console.log("minutes: " + minutes);
-        console.log("hours: " + hours);
+        this.startTime = new Date().getTime();
+        this.timerInterval = setInterval(()=>
+        {   
+            this.displayTime();
+        }, 1000);
     }
-    draw()
+
+    getElapsedTime()
     {
-        let secondsRight = 0;
-        let secondsLeft = 0;
-        let trackerElement = document.createElement("div");
-        let secondsElementRight = document.createElement("span");
-        let secondsElementLeft = document.createElement("span");
-        // let hoursElement = document.createElement("span");        
-        
-        if(seconds < 10)
-        {
-            secondsRight ++;
-            secondsElementRight.innerText = secondsRight;
-            secondsElementLeft.innerText = "0";
-        }
-        if (secondsRight == 10)
-        {
-            secondsRight = 0;
-            secondsLeft ++;
-            secondsElementLeft.innerText = secondsLeft;
-        }
-        if (seconds == 60)
-        {
-            let minutesElement = document.createElement("span");
-            minutesElement.append(trackerElement);
-            minutesElement.innerText = minutes;
-        }
-        if (minutes == 60)
-        
-        taskContainer.append(trackerElement);
-        secondsElementLeft.append(trackerElement);
-        secondsElementRight.append(trackerElement);
+        const currentTime = new Date().getTime();
+        const elapsedTime = currentTime - this.startTime;
+        return elapsedTime;
+    }
+    
+    draw(element)
+    {
+        element.append(timerElement);
+    }
+
+    displayTime()
+    {
+        const elapsedTime = this.getElapsedTime();
+        timerElement.innerText = this.formatTime(elapsedTime);
+    }
+
+    formatTime(millisecondes)
+    {
+        let seconds = Math.floor(millisecondes / 1000);
+        let minutes = Math.floor(seconds / 60);
+        seconds %= 60;
+        let hours = Math.floor(minutes / 60);
+        minutes %= 60;
+
+        return `${this.pad(hours)}:${this.pad(minutes)}:${this.pad(seconds)}`;
+    }
+    pad(num)
+    {
+        return num < 10 ? '0' + num : num;
     }
 }
 
-startTimerButton.addEventListener("click",()=>
-{
-    new Tracker();
-})
 
 

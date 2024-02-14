@@ -1,13 +1,18 @@
+import { Tracker, startTimerButton } from "./Timer.js";
+
 const input = document.querySelector('input');
 const addTaskButton = document.querySelector('.add-task-button');
 const taskContainer = document.querySelector('.task-container');
 
+
+
 class Task
 {
-    constructor(name, isDone = false)
+    constructor(name, isDone = false, isTracked)
     {
         this.name = name;
         this.isDone = isDone;
+        this.isTracked = 0;
     }
 }
 
@@ -43,6 +48,13 @@ class TodoList
                 this.updateLocalStorage();
             });
 
+            startTimerButton.addEventListener("click",()=>
+            {
+                let tracker = new Tracker(taskElement);
+                this.tasks[index].isTracked = tracker;
+                this.updateLocalStorage();
+            })
+            
             let deleteCross = document.createElement('button');
             deleteCross.classList.add('delete-mark');
             deleteCross.innerText='+';
@@ -52,9 +64,10 @@ class TodoList
                 taskElement.remove();
                 this.updateLocalStorage();
             })
-
+            
             taskContainer.appendChild(taskElement);
             taskElement.appendChild(checkbox);
+            taskElement.append(startTimerButton);
             taskElement.appendChild(deleteCross);
         });
     }
