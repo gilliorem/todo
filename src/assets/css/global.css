@@ -1,0 +1,6 @@
+@import url(@/assets/css/fonts.css);
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+}
